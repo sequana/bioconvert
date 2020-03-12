@@ -1,0 +1,75 @@
+"""bioconvert pipeline
+
+Author: Thomas Cokelaer
+Affiliation: Institut Pasteur @ 2019
+
+This pipeline is part of Sequana software (sequana.readthedocs.io)
+
+snakemake -s bioconvert.rules --forceall --stats stats.txt --cores 4
+
+
+"""
+import glob
+import sequana
+from sequana import snaketools as sm
+
+# This must be defined before the include
+configfile: "config.yaml"
+
+
+# A convenient manager
+manager = sm.PipelineManager("bioconvert", config, fastq=False)
+
+
+command = config["bioconvert"]["command"]
+inext = config["bioconvert"]['input_extension']
+outext = config["bioconvert"]['output_extension']
+method = config["bioconvert"]['method']
+input_pattern = config["input_pattern"]
+
+
+filenames = glob.glob(config["input_directory"] + os.sep + input_pattern)
+
+#def remove_compression(x):
+#    for ext in [".gz", ".dsrc", ".bz2"]:
+#        if x.endswith(ext):
+#            x = x.strip(ext)
+#    return x
+samples = [os.path.basename(x).replace("." + inext, "") for x in filenames]
+
+# create symbolic links
+try:
+    os.mkdir("input")
+except:
+    pass
+for filename in filenames:
+    try:
+        os.symlink(filename, "./input/{}".format(os.path.basename(filename)))
+    except:
+        pass
+
+
+rule all:
+    input: ["output/{}.{}".format(x,outext) for x in samples]
+
+
+rule bioconvert:
+    input: "input/{sample}." + inext
+    output: "output/{sample}." + outext
+    run:
+        cmd = "bioconvert {} ".format(command) + "{input} {output} --verbosity ERROR "
+        if method:
+            cmd += "--method {}".format(method)
+        shell(cmd)
+
+onsuccess:
+    shell("chmod -R g+w .")
+    from sequana.snaketools import OnSuccessCleaner
+    sc = OnSuccessCleaner()
+    sc.add_makefile()
+    print("Once done, please clean up the directory using\n'make clean'")
+
+
+onerror:
+    print("An error occurred. See message above.")
+
