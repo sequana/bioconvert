@@ -1,0 +1,11 @@
+language: Snakemake
+name: sequana_bioconvert
+description: convert NGS format from one to another using bioconvert
+url: https://github.com/sequana/sequana_bioconvert/blob/master/sequana_pipelines/bioconvert/bioconvert.rules
+categories: [format, conversion]
+authors:
+    - firstname: Thomas
+      lastname: Cokelaer
+      email: thomas.cokelaer@pasteur.fr
+
+
