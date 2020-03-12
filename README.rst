@@ -1,8 +1,8 @@
 This is is the **bioconvert** pipeline from the `Sequana <https://sequana.readthedocs.org>`_ project
 
-:Overview: TODO 
-:Input: TODO
-:Output: TODO
+:Overview: convert NGS format from one to another using bioconvert
+:Input: whatever input format accepted by bioconvert
+:Output: whatever output format accepted by bioconvert
 :Status: draft
 :Citation: Cokelaer et al, (2017), ‘Sequana’: a Set of Snakemake NGS pipelines, Journal of Open Source Software, 2(16), 352, JOSS DOI doi:10.21105/joss.00352
 
