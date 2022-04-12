@@ -1,2 +1,3 @@
-sequana
-sequana_pipetools
+sequana>=0.14
+sequana_pipetools>=0.7.2
+
