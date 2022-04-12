@@ -1,6 +1,8 @@
-# -*- coding: utf-8 -*-
 # License: 3-clause BSD
 from setuptools import setup, find_namespace_packages
+from setuptools.command.develop import develop
+from setuptools.command.install import install
+import subprocess
 
 _MAJOR               = 0
 _MINOR               = 9
@@ -34,9 +36,11 @@ metainfo = {
           'Topic :: Scientific/Engineering :: Physics']
     }
 
+NAME = "bioconvert"
+
 
 setup(
-    name             = "sequana_bioconvert",
+    name             = "sequana_{}".format(NAME),
     version          = version,
     maintainer       = metainfo['authors']['main'][0],
     maintainer_email = metainfo['authors']['main'][1],
@@ -51,10 +55,9 @@ setup(
     classifiers      = metainfo['classifiers'],
 
     # package installation
-    packages = ["sequana_pipelines.bioconvert",
-        'sequana_pipelines.bioconvert.data' ],
+    packages = ["sequana_pipelines.bioconvert"],
 
-    install_requires = "sequana",
+    install_requires = open("requirements.txt").read(),
 
     # This is recursive include of data files
     exclude_package_data = {"": ["__pycache__"]},
