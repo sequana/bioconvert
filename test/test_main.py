@@ -3,14 +3,14 @@ import os
 import tempfile
 import subprocess
 import sys
-from sequana.pipelines_common import get_pipeline_location as getpath
-
-sharedir = getpath('bioconvert')
 
 
+
+from . import test_dir
+sharedir  = f"{test_dir}/data/"
 def test_standalone_subprocess():
     directory = tempfile.TemporaryDirectory()
-    cmd = """sequana_pipelines_bioconvert --input-directory {}
+    cmd = """sequana_bioconvert --input-directory {}
             --input-pattern "*fastq.gz" --input-ext fastq.gz --output-ext fasta.gz
             --working-directory {} --force --command fastq2fasta
           """.format(sharedir, directory.name)
@@ -33,7 +33,7 @@ def test_full():
         print(directory)
         wk = directory
 
-        cmd = "sequana_pipelines_bioconvert --input-directory {} "
+        cmd = "sequana_bioconvert --input-directory {} "
         cmd += "--working-directory {}  --force --command fastq2fasta"
         cmd += '--input-pattern "*fastq.gz" --input-ext fastq.gz'
         cmd += "--output-ext fasta.gz "
@@ -44,6 +44,6 @@ def test_full():
 
 
 def test_version():
-    cmd = "sequana_pipelines_bioconvert --version"
+    cmd = "sequana_bioconvert --version"
     subprocess.call(cmd.split())
 

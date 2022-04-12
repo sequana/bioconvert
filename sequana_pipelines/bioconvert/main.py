@@ -1,40 +1,38 @@
+#
+#  This file is part of Sequana software
+#
+#  Copyright (c) 2016-2021 - Sequana Development Team
+#
+#  Distributed under the terms of the 3-clause BSD license.
+#  The full license is in the LICENSE file, distributed with this software.
+#
+#  website: https://github.com/sequana/sequana
+#  documentation: http://sequana.readthedocs.io
+#
+##############################################################################
 import sys
 import os
 import argparse
+import subprocess
 
-from sequana.pipelines_common import *
-from sequana.snaketools import Module
-from sequana import logger
-logger.level = "INFO"
+from sequana_pipetools.options import *
+from sequana_pipetools.options import before_pipeline
+from sequana_pipetools.misc import Colors
+from sequana_pipetools.info import sequana_epilog, sequana_prolog
+from sequana_pipetools import SequanaManager
 
 col = Colors()
 
 NAME = "bioconvert"
-m = Module(NAME)
-m.is_executable()
+
+
 
 
 class Options(argparse.ArgumentParser):
-    def __init__(self, prog=NAME):
-        usage = col.purple(
-            """This script prepares the sequana pipeline bioconvert layout to
-            include the Snakemake pipeline and its configuration file ready to
-            use.
-
-            In practice, it copies the config file and the pipeline into a
-            directory (bioconvert) together with an executable script
-
-            For a local run, use :
-
-                sequana_pipelines_bioconvert --input-directory PATH_TO_DATA 
-
-            For a run on a SLURM cluster:
-
-                sequana_pipelines_bioconvert --input-directory PATH_TO_DATA 
-
-        """
-        )
+    def __init__(self, prog=NAME, epilog=None):
+        usage = col.purple(sequana_prolog.format(**{"name": NAME}))
         super(Options, self).__init__(usage=usage, prog=prog, description="",
+            epilog=epilog,
             formatter_class=argparse.ArgumentDefaultsHelpFormatter
         )
 
@@ -72,9 +70,14 @@ def main(args=None):
     if args is None:
         args = sys.argv
 
-    options = Options(NAME).parse_args(args[1:])
+    # whatever needs to be called by all pipeline before the options parsing
+    before_pipeline(NAME)
 
-    manager = PipelineManager(options, NAME)
+    # option parsing including common epilog
+    options = Options(NAME, epilog=sequana_epilog).parse_args(args[1:])
+
+    # the real stuff is here
+    manager = SequanaManager(options, NAME)
 
     # create the beginning of the command and the working directory
     manager.setup()
