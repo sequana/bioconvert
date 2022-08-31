@@ -10,7 +10,6 @@ snakemake -s bioconvert.rules --forceall --stats stats.txt --cores 4
 
 """
 import glob
-import sequana
 from sequana_pipetools import PipelineManager
 
 # This must be defined before the include

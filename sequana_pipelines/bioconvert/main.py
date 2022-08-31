@@ -81,7 +81,7 @@ def main(args=None):
 
     # create the beginning of the command and the working directory
     manager.setup()
-    from sequana import logger
+    from sequana_pipetools import logger
 
     logger.setLevel(options.level)
     logger.name = "sequana_bioconvert"

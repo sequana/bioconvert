@@ -3,9 +3,12 @@ name: Tests
 on:
   push:
     branches:
-      - master
+      - main
+      - dev
   pull_request:
     branches-ignore: []
+  schedule:
+    - cron: '0 0 * * SUN'
 
 jobs:
   build-linux:
@@ -13,7 +16,7 @@ jobs:
     strategy:
       max-parallel: 5
       matrix:
-        python: [3.7,3.8,3.9]
+        python: [3.7, 3.8]
       fail-fast: false
 
 
@@ -26,21 +29,12 @@ jobs:
     - name: checkout git repo
       uses: actions/checkout@v2
 
-    - name: Set up Python 3.X
-      uses: actions/setup-python@v2
+    - name: conda/mamba
+      uses: mamba-org/provision-with-micromamba@main
       with:
-        python-version: ${{ matrix.python }}
-
-    - name: Add conda to system path
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
-        conda update ruamel_yaml
-
-    - name: conda
-      run: |
-        conda install -c conda-forge mamba --quiet
-        mamba install -c bioconda -c conda-forge --quiet -y dsrc
+          environment-file: environment.yml
+          extra-specs: |
+            python=${{ matrix.python }}
 
     - name: Install dependencies
       run: |
@@ -60,3 +54,4 @@ jobs:
         coveralls --service=github
       env:
           GITHUB_TOKEN: ${{ github.token }}
+
