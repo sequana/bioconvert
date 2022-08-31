@@ -66,7 +66,17 @@ configuration files and then execute the pipeline yourself with specific paramet
 
     snakemake -s bioconvert.rules -c config.yaml --cores 4 --stats stats.txt
 
-Or use `sequanix <https://sequana.readthedocs.io/en/master/sequanix.html>`_ interface.
+Or use `sequanix <https://sequana.readthedocs.io/en/main/sequanix.html>`_ interface.
+
+Singularity
+~~~~~~~~~~~
+
+::
+
+    sequana_bioconvert --input-pattern '*gz' --input-directory data --input-ext fastq.gz --output-ext fasta.gz --command fastq2fasta --force --use-singularity --singularity-prefix ~/images/
+
+
+
 
 Requirements
 ~~~~~~~~~~~~
@@ -75,7 +85,7 @@ This pipelines requires the following executable(s):
 
 - bioconvert
 
-.. image:: https://raw.githubusercontent.com/sequana/sequana_bioconvert/master/sequana_pipelines/bioconvert/dag.png
+.. image:: https://raw.githubusercontent.com/sequana/sequana_bioconvert/main/sequana_pipelines/bioconvert/dag.png
 
 
 Details
@@ -88,7 +98,7 @@ A brief sequana summary report is also produced.
 Rules and configuration details
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Here is the `latest documented configuration file <https://raw.githubusercontent.com/sequana/sequana_bioconvert/master/sequana_pipelines/bioconvert/config.yaml>`_
+Here is the `latest documented configuration file <https://raw.githubusercontent.com/sequana/sequana_bioconvert/main/sequana_pipelines/bioconvert/config.yaml>`_
 to be used with the pipeline. Each rule used in the pipeline may have a section in the configuration file. 
 
 Changelog
@@ -97,6 +107,7 @@ Changelog
 ========= ====================================================================
 Version   Description
 ========= ====================================================================
+0.10.0    Add container
 0.9.0     Version using new sequana/sequana_pipetools framework
 0.8.1     **Working version**
 0.8.0     **First release.**
@@ -107,6 +118,6 @@ Contribute & Code of Conduct
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To contribute to this project, please take a look at the 
-`Contributing Guidelines <https://github.com/sequana/sequana/blob/master/CONTRIBUTING.rst>`_ first. Please note that this project is released with a 
-`Code of Conduct <https://github.com/sequana/sequana/blob/master/CONDUCT.md>`_. By contributing to this project, you agree to abide by its terms.
+`Contributing Guidelines <https://github.com/sequana/sequana/blob/main/CONTRIBUTING.rst>`_ first. Please note that this project is released with a 
+`Code of Conduct <https://github.com/sequana/sequana/blob/main/CONDUCT.md>`_. By contributing to this project, you agree to abide by its terms.
 
