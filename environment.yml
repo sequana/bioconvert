@@ -1,0 +1,34 @@
+name: bioconvert
+
+channels:
+- bioconda
+- conda-forge
+- defaults
+- r
+
+dependencies:
+- gffread
+- bamtools
+- bcftools
+- bedtools
+- bedops
+- dsrc
+- go==1.10.3
+- mosdepth
+- pbzip2
+- pigz
+- plink
+- sambamba
+- samtools>=1.9
+- seqtk
+- seqkit
+- squizz
+- sra-tools
+- ucsc-wigtobigwig
+- ucsc-twobittofa
+- ucsc-fatotwobit
+- ucsc-bedgraphtobigwig
+- ucsc-bigwigtobedgraph
+- wiggletools
+- sed
+- mawk
