@@ -81,6 +81,11 @@ def main(args=None):
 
     # create the beginning of the command and the working directory
     manager.setup()
+    from sequana import logger
+
+    logger.setLevel(options.level)
+    logger.name = "sequana_bioconvert"
+    logger.info(f"#Welcome to sequana_bioconvert pipeline.")
 
     # fill the config file with input parameters
     cfg = manager.config.config

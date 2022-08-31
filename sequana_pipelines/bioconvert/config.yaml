@@ -9,7 +9,6 @@
 
 
 input_directory: /home/cokelaer/Work/github/sequana_bioconvert
-input_readtag: _R[12]_
 input_pattern: '*fastq.gz'
 
 

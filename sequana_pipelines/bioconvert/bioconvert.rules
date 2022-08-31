@@ -11,14 +11,14 @@ snakemake -s bioconvert.rules --forceall --stats stats.txt --cores 4
 """
 import glob
 import sequana
-from sequana import snaketools as sm
+from sequana_pipetools import PipelineManager
 
 # This must be defined before the include
 configfile: "config.yaml"
 
 
 # A convenient manager
-manager = sm.PipelineManager("bioconvert", config, fastq=False)
+manager = PipelineManager("bioconvert", config, fastq=False)
 
 
 command = config["bioconvert"]["command"]
@@ -30,18 +30,16 @@ input_pattern = config["input_pattern"]
 
 filenames = glob.glob(config["input_directory"] + os.sep + input_pattern)
 
-#def remove_compression(x):
-#    for ext in [".gz", ".dsrc", ".bz2"]:
-#        if x.endswith(ext):
-#            x = x.strip(ext)
-#    return x
-samples = [os.path.basename(x).replace("." + inext, "") for x in filenames]
+samples = [Path(x).name.split(".")[0] for x in filenames]
+
+print(samples)
 
 # create symbolic links
 try:
     os.mkdir("input")
 except:
     pass
+
 for filename in filenames:
     try:
         os.symlink(filename, "./input/{}".format(os.path.basename(filename)))
@@ -53,20 +51,26 @@ rule all:
     input: ["output/{}.{}".format(x,outext) for x in samples]
 
 
+method = config["bioconvert"].get("method", "")
+
 rule bioconvert:
-    input: "input/{sample}." + inext
-    output: "output/{sample}." + outext
-    run:
-        cmd = "bioconvert {} ".format(command) + "{input} {output} --verbosity ERROR "
-        if method:
-            cmd += "--method {}".format(method)
-        shell(cmd)
+    input:
+        "input/{sample}." + inext
+    output:
+        "output/{sample}." + outext
+    params:
+        command= config['bioconvert']['command'],
+        method= f" --method {method}" if method else ""
+    container:
+        "https://zenodo.org/record/7034822/files/bioconvert_0.6.1.img"
+    shell:
+        """
+           bioconvert {params.command} {input} {output} --verbosity ERROR --force {params.method}
+        """
 
 onsuccess:
     shell("chmod -R g+w .")
-    from sequana.snaketools import OnSuccessCleaner
-    sc = OnSuccessCleaner()
-    sc.add_makefile()
+    manager.teardown()
     print("Once done, please clean up the directory using\n'make clean'")
 
 
