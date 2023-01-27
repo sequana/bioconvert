@@ -82,7 +82,7 @@ Or use `sequanix <https://sequana.readthedocs.io/en/main/sequanix.html>`_ interf
 Requirements
 ~~~~~~~~~~~~
 
-This pipelines requires the following executable(s) installed with sequana_biocovvert: bioconvert
+This pipelines requires the following executable(s) installed with sequana_bioconvert: bioconvert
 
 All dependencies and external dependencies related to bioconvert are available through the apptainer used by this
 **sequana_bioconvert** pipeline. 
