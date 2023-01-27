@@ -23,12 +23,16 @@ This is is the **bioconvert** pipeline from the `Sequana <https://sequana.readth
 Installation
 ~~~~~~~~~~~~
 
-You must install Sequana first::
+This package depends on Python only and singularity. To install **sequana_bioconvert**, just install this package as
+follows::
 
-    pip install sequana
+    pip install sequana_bioconvert
 
-Then, just install this package::
+For **singularity**, we recommend to use a conda environment::
 
+
+    conda create --name bioconvert -y python=3.8 singularity
+    conda activate bioconvert
     pip install sequana_bioconvert
 
 
@@ -39,8 +43,7 @@ Usage
 
     sequana_bioconvert --help
 
-
-You need to provide the type of conversion you wish to perform with the 
+You need to provide the type of conversion you wish to perform with the
 *--command* argument. You also need to tell the type of extensions expected
 including the compression (gz, bz2 or dsrc recognised). Finally, the
 *--input-directory* and *--input-pattern* must be used to find the input
@@ -49,50 +52,41 @@ files.::
     sequana_bioconvert --input-directory . --input-ext fastq.gz --output-ext
         fasta.gz --command fastq2fasta --input-pattern "*.fastq.gz"
 
-
-This creates a directory with the pipeline and configuration file. You will then need 
-to execute the pipeline::
+This command creates a directory with the pipeline and configuration file. You will then need 
+to execute the pipeline as follows::
 
     cd bioconvert
     sh bioconvert.sh  # for a local run
 
-This launch a snakemake pipeline. Symboli links to the input data are created in
+This launches a snakemake pipeline. Symbolic links to the input data are created in
 the ./input directory and results stored in the ./output directory.
+
+Some conversions require external standalones. We recommend to use our singularity image. 
+To do so, add **--use-apptainer** options when you initialse the pipeline. You can also 
+specify where to store the singularity image once for all using **--apptainer-prefix**::
+
+    sequana_bioconvert --input-directory . --input-ext fastq.gz --output-ext
+        fasta.gz --command fastq2fasta --input-pattern "*.fastq.gz"
+        --use-apptainer --apptainer-prefix ~/images
+
 
 See bioconvert.readthedocs.io for more details about **bioconvert** itself.
 
-If you are familiar with snakemake, you can retrieve the pipeline itself and its 
+If you are familiar with snakemake, you can retrieve the pipeline itself and its
 configuration files and then execute the pipeline yourself with specific parameters::
 
     snakemake -s bioconvert.rules -c config.yaml --cores 4 --stats stats.txt
 
 Or use `sequanix <https://sequana.readthedocs.io/en/main/sequanix.html>`_ interface.
 
-Singularity
-~~~~~~~~~~~
-
-::
-
-    sequana_bioconvert --input-pattern '*gz' --input-directory data --input-ext fastq.gz --output-ext fasta.gz --command fastq2fasta --force --use-singularity --singularity-prefix ~/images/
-
-
-
-
 Requirements
 ~~~~~~~~~~~~
 
-This pipelines requires the following executable(s):
+This pipelines requires the following executable(s) installed with sequana_biocovvert: bioconvert
 
-- bioconvert
+All dependencies and external dependencies related to bioconvert are available through the apptainer used by this
+**sequana_bioconvert** pipeline. 
 
-.. image:: https://raw.githubusercontent.com/sequana/sequana_bioconvert/main/sequana_pipelines/bioconvert/dag.png
-
-
-Details
-~~~~~~~~~
-
-This pipeline runs **bioconvert** in parallel on the input fastq files (paired or not). 
-A brief sequana summary report is also produced.
 
 
 Rules and configuration details
@@ -107,6 +101,7 @@ Changelog
 ========= ====================================================================
 Version   Description
 ========= ====================================================================
+1.0.0     Uses bioconvert 1.0.0
 0.10.0    Add container
 0.9.0     Version using new sequana/sequana_pipetools framework
 0.8.1     **Working version**

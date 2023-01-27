@@ -21,9 +21,26 @@ from sequana_pipetools.misc import Colors
 from sequana_pipetools.info import sequana_epilog, sequana_prolog
 from sequana_pipetools import SequanaManager
 
+
 col = Colors()
 
 NAME = "bioconvert"
+
+
+# retrieve possible commands from the bioconvert registry.
+from bioconvert.core.registry import Registry
+from bioconvert import logger as blog
+blog.level = "ERROR"
+r = Registry()
+blog.level = "WARNING"
+commands = list(r.get_converters_names())
+
+methods = {}
+smethods = set()
+for command in r._fmt_registry.values():
+    methods[command.__name__.lower()] = command.available_methods
+    for x in command.available_methods:
+        smethods.add(x)
 
 
 
@@ -31,6 +48,18 @@ NAME = "bioconvert"
 class Options(argparse.ArgumentParser):
     def __init__(self, prog=NAME, epilog=None):
         usage = col.purple(sequana_prolog.format(**{"name": NAME}))
+
+        usage += """\nTo convert a bunch of fastq files into fasta, initiate the pipeline using:
+
+    sequana_bioconvert --input-directory data/ --input-ext "fastq.gz" --output-ext "fasta.gz" 
+ --use-apptainer --apptainer-prefix ~/images/ --command fastq2fasta --input-pattern "*"
+
+    cd bioconvert
+    sh bioconvert.sh
+
+
+"""
+
         super(Options, self).__init__(usage=usage, prog=prog, description="",
             epilog=epilog,
             formatter_class=argparse.ArgumentDefaultsHelpFormatter
@@ -50,19 +79,22 @@ class Options(argparse.ArgumentParser):
         pipeline_group = self.add_argument_group("pipeline")
 
         pipeline_group.add_argument("--input-pattern", dest="input_pattern",
-            required=True, type=str)
+            required=True, type=str, help="""The input pattern that allows you to restrict the search more specifically
+(default is to take all files in the input directory""")
         pipeline_group.add_argument("--input-directory", dest="input_directory",
-            required=True, type=str)
+            required=True, type=str, help="""The input directory where to look for input files""")
         pipeline_group.add_argument("--input-ext", dest="input_extension",
-            required=True, type=str)
-        pipeline_group.add_argument("--output-ext", dest="output_extension",
-            required=True, type=str)
+            required=True, type=str, help="""The extension of the files to convert. See bioconvert --help for details""")
+        pipeline_group.add_argument("--output-ext", dest="output_extension", 
+            required=True, type=str, help="""The extension of the output files. See bioconvert --help for details""")
         pipeline_group.add_argument("--command", dest="command",
-            required=True, type=str)
+            required=True, type=str, help="""One of the possible conversion available in bioconvert.""",
+choices=commands)
         pipeline_group.add_argument("--method", dest="method",
             type=str,
             default=None,
-            help="If you know bioconvert and method's name, you can set it here")
+            choices=smethods,
+            help="If you know bioconvert and method's name, you can set it here. This depends on the command used. Type 'bioconvert fastq-fasta --show--methods' to get the valid method for the command 'fastq2fasta' ")
 
 
 def main(args=None):
@@ -82,7 +114,6 @@ def main(args=None):
     # create the beginning of the command and the working directory
     manager.setup()
     from sequana_pipetools import logger
-
     logger.setLevel(options.level)
     logger.name = "sequana_bioconvert"
     logger.info(f"#Welcome to sequana_bioconvert pipeline.")

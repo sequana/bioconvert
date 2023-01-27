@@ -31,7 +31,6 @@ filenames = glob.glob(config["input_directory"] + os.sep + input_pattern)
 
 samples = [Path(x).name.split(".")[0] for x in filenames]
 
-print(samples)
 
 # create symbolic links
 try:
