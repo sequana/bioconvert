@@ -28,8 +28,12 @@ jobs:
         sudo rm -rf "$AGENT_TOOLSDIRECTORY"
     - name: install graphviz
       run: |
-        sudo apt-get install -y graphviz
-        curl -s https://raw.githubusercontent.com/apptainer/apptainer/main/tools/install-unprivileged.sh | bash -s - /usr/local/bin
+        sudo apt update
+        sudo apt-get install -y graphviz software-properties-common
+        sudo add-apt-repository -y ppa:apptainer/ppa
+        sudo apt update
+        sudo apt install -y apptainer
+        #curl https://raw.githubusercontent.com/apptainer/apptainer/main/tools/install-unprivileged.sh | sudo bash -s -  /usr/local/bin/
 
     - name: checkout git repo
       uses: actions/checkout@v3
@@ -49,7 +53,8 @@ jobs:
 
     - name: testing
       run: |
-        sequana_bioconvert --input-directory data/ --input-ext "fastq.gz" --output-ext "fasta.gz" --use-apptainer --command fastq2fasta --input-pattern "*" && cd bioconvert && sh bioconvert.sh
+        export PATH=$PATH:/usr/local/bin
+        sequana_bioconvert --input-directory test/data/ --input-ext "fastq.gz" --output-ext "fasta.gz" --use-apptainer --command fastq2fasta --input-pattern "*" && cd bioconvert && sh bioconvert.sh
 
 
 
