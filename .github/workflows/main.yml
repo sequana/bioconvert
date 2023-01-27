@@ -36,13 +36,9 @@ jobs:
           extra-specs: |
             python=${{ matrix.python }}
 
-    - name: Install dependencies
-      run: |
-        pip install coveralls pytest-cov pytest pytest-xdist
-
     - name: install package itself
       run: |
-         pip install .
+         pip install .[testing]
 
     - name: testing
       run: |
