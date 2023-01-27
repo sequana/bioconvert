@@ -29,7 +29,7 @@ jobs:
     - name: install graphviz
       run: |
         sudo apt-get install -y graphviz
-        sudo curl -s https://raw.githubusercontent.com/apptainer/apptainer/main/tools/install-unprivileged.sh | bash -s - /usr/bin
+        curl -s https://raw.githubusercontent.com/apptainer/apptainer/main/tools/install-unprivileged.sh | bash -s - /usr/local/bin
 
     - name: checkout git repo
       uses: actions/checkout@v3
