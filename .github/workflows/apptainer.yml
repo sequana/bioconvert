@@ -33,7 +33,6 @@ jobs:
         sudo add-apt-repository -y ppa:apptainer/ppa
         sudo apt update
         sudo apt install -y apptainer
-        #curl https://raw.githubusercontent.com/apptainer/apptainer/main/tools/install-unprivileged.sh | sudo bash -s -  /usr/local/bin/
 
     - name: checkout git repo
       uses: actions/checkout@v3
