@@ -24,7 +24,7 @@ jobs:
 
     - name: install graphviz
       run: |
-        sudo apt-get install -y graphviz
+        sudo apt-get install -y graphviz libcurl4-openssl-dev build-essential
 
     - name: checkout git repo
       uses: actions/checkout@v2
@@ -36,19 +36,18 @@ jobs:
           extra-specs: |
             python=${{ matrix.python }}
 
-    - name: Install dependencies
-      run: |
-        pip install coveralls pytest-cov pytest pytest-xdist
-
     - name: install package itself
+      shell: bash -l {0}
       run: |
-         pip install .
+         pip install .[testing]
 
     - name: testing
+      shell: bash -l {0}
       run: |
         pytest -v --cov-report term-missing --cov=sequana_pipelines.bioconvert
 
     - name: coveralls
+      shell: bash -l {0}
       run: |
         echo $COVERALLS_REPO_TOKEN
         coveralls --service=github
