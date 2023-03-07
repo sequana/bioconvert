@@ -1,7 +1,10 @@
+|Logo|
+
+
 This is is the **bioconvert** pipeline from the `Sequana <https://sequana.readthedocs.org>`_ project
 
 
-.. image:: https://badge.fury.io/py/sequana-bioconver.svg
+.. image:: https://badge.fury.io/py/sequana-bioconvert.svg
      :target: https://pypi.python.org/pypi/sequana_bioconvert
 
 .. image:: http://joss.theoj.org/papers/10.21105/joss.00352/status.svg
@@ -11,11 +14,12 @@ This is is the **bioconvert** pipeline from the `Sequana <https://sequana.readth
 .. image:: https://github.com/sequana/bioconvert/actions/workflows/main.yml/badge.svg
    :target: https://github.com/sequana/bioconvert/actions/workflows    
 
+|Codacy-Grade|
 
 
-:Overview: convert NGS format from one to another using bioconvert
-:Input: whatever input format accepted by bioconvert
-:Output: whatever output format accepted by bioconvert
+:Overview: convert NGS format from one to another using Bioconvert
+:Input: whatever input format accepted by Bioconvert
+:Output: whatever output format accepted by Bioconvert
 :Status: production
 :Citation: Cokelaer et al, (2017), ‘Sequana’: a Set of Snakemake NGS pipelines, Journal of Open Source Software, 2(16), 352, JOSS DOI doi:10.21105/joss.00352
 
@@ -116,3 +120,8 @@ To contribute to this project, please take a look at the
 `Contributing Guidelines <https://github.com/sequana/sequana/blob/main/CONTRIBUTING.rst>`_ first. Please note that this project is released with a 
 `Code of Conduct <https://github.com/sequana/sequana/blob/main/CONDUCT.md>`_. By contributing to this project, you agree to abide by its terms.
 
+
+.. |Codacy-Grade| image:: https://app.codacy.com/project/badge/Grade/9b8355ff642f4de9acd4b270f8d14d10
+   :target: https://www.codacy.com/gh/sequana/bioconvert/dashboard
+
+.. |Logo| image:: https://github.com/sequana/sequana/blob/dev/doc/_static/logo_256x256.png

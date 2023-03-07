@@ -11,6 +11,10 @@
 input_directory: /home/cokelaer/Work/github/sequana_bioconvert
 input_pattern: '*fastq.gz'
 
+# ======================================= [apptainers] ======================
+#
+apptainers:
+  bioconvert: "https://zenodo.org/record/7704649/files/bioconvert_1.0.0.img"
 
 ##############################################################################
 # Your section
