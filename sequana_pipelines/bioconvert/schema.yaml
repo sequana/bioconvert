@@ -3,6 +3,9 @@
 
 type: map
 mapping:
+    "sequana_wrappers":
+        type: str
+        required: true
     "input_directory":
         type: str
         required: False
@@ -12,6 +15,10 @@ mapping:
     "input_pattern":
         type: str
         required: False
+
+    "apptainers":
+        type: any
+
     "bioconvert":
         type: map
         mapping:
@@ -23,4 +30,10 @@ mapping:
                 type: str
             "output_extension":
                 type: str
-            
+            "resources":
+                 type: map
+                 mapping:
+                     "mem":
+                        type: str
+
+
