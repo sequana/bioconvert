@@ -10,26 +10,35 @@
 #  documentation: http://sequana.readthedocs.io
 #
 ##############################################################################
-import sys
 import os
-import argparse
 import subprocess
+import sys
 
-from sequana_pipetools.options import *
-from sequana_pipetools.options import before_pipeline
-from sequana_pipetools.misc import Colors
-from sequana_pipetools.info import sequana_epilog, sequana_prolog
+import click_completion
+import rich_click as click
 from sequana_pipetools import SequanaManager
+from sequana_pipetools.options import *
 
-
-col = Colors()
-
+click_completion.init()
 NAME = "bioconvert"
 
 
+help = init_click(
+    NAME,
+    groups={
+        "Pipeline Specific": [
+            "--aligner-choice",
+            "--contaminant-file",
+        ],
+    },
+)
+
+
+from bioconvert import logger as blog
+
 # retrieve possible commands from the bioconvert registry.
 from bioconvert.core.registry import Registry
-from bioconvert import logger as blog
+
 blog.level = "ERROR"
 r = Registry()
 blog.level = "WARNING"
@@ -43,87 +52,83 @@ for command in r._fmt_registry.values():
         smethods.add(x)
 
 
+@click.command(context_settings=help)
+@include_options_from(ClickSnakemakeOptions, working_directory=NAME)
+@include_options_from(ClickSlurmOptions)
+@include_options_from(ClickGeneralOptions)
+@click.option(
+    "--input-pattern",
+    "input_pattern",
+    required=True,
+    type=click.STRING,
+    help="""The input pattern that allows you to restrict the search more specifically (default is to take all files in the input directory""",
+)
+@click.option(
+    "--input-directory",
+    "input_directory",
+    required=True,
+    type=click.Path(dir_okay=True, file_okay=False),
+    help="""The input directory where to look for input files""",
+)
+@click.option(
+    "--input-ext",
+    "input_extension",
+    required=True,
+    type=click.STRING,
+    help="""The extension of the files to convert. See bioconvert --help for details""",
+)
+@click.option(
+    "--output-ext",
+    "output_extension",
+    required=True,
+    type=click.STRING,
+    help="""The extension of the output files. See bioconvert --help for details""",
+)
+@click.option(
+    "--command",
+    "command",
+    required=True,
+    type=click.Choice(commands),
+    help="""One of the possible conversion available in bioconvert.""",
+)
+@click.option(
+    "--method",
+    "method",
+    type=click.Choice(smethods),
+    default=None,
+    help="If you know bioconvert and method's name, you can set it here. This depends on the command used. Type 'bioconvert fastq-fasta --show--methods' to get the valid method for the command 'fastq2fasta' ",
+)
+def main(**options):
+    """
 
+    To convert a bunch of fastq files into fasta, initiate the pipeline using:
 
-class Options(argparse.ArgumentParser):
-    def __init__(self, prog=NAME, epilog=None):
-        usage = col.purple(sequana_prolog.format(**{"name": NAME}))
+        sequana_bioconvert --input-directory data/ --input-ext "fastq.gz" --output-ext "fasta.gz"
+            --use-apptainer --apptainer-prefix ~/images/ --command fastq2fasta --input-pattern "*"
 
-        usage += """\nTo convert a bunch of fastq files into fasta, initiate the pipeline using:
+        cd bioconvert
+        sh bioconvert.sh
 
-    sequana_bioconvert --input-directory data/ --input-ext "fastq.gz" --output-ext "fasta.gz" 
- --use-apptainer --apptainer-prefix ~/images/ --command fastq2fasta --input-pattern "*"
+    """
 
-    cd bioconvert
-    sh bioconvert.sh
-
-
-"""
-
-        super(Options, self).__init__(usage=usage, prog=prog, description="",
-            epilog=epilog,
-            formatter_class=argparse.ArgumentDefaultsHelpFormatter
-        )
-
-        # add a new group of options to the parser
-        so = SlurmOptions()
-        so.add_options(self)
-
-        # add a snakemake group of options to the parser
-        so = SnakemakeOptions(working_directory=NAME)
-        so.add_options(self)
-
-        so = GeneralOptions()
-        so.add_options(self)
-
-        pipeline_group = self.add_argument_group("pipeline")
-
-        pipeline_group.add_argument("--input-pattern", dest="input_pattern",
-            required=True, type=str, help="""The input pattern that allows you to restrict the search more specifically
-(default is to take all files in the input directory""")
-        pipeline_group.add_argument("--input-directory", dest="input_directory",
-            required=True, type=str, help="""The input directory where to look for input files""")
-        pipeline_group.add_argument("--input-ext", dest="input_extension",
-            required=True, type=str, help="""The extension of the files to convert. See bioconvert --help for details""")
-        pipeline_group.add_argument("--output-ext", dest="output_extension", 
-            required=True, type=str, help="""The extension of the output files. See bioconvert --help for details""")
-        pipeline_group.add_argument("--command", dest="command",
-            required=True, type=str, help="""One of the possible conversion available in bioconvert.""",
-choices=commands)
-        pipeline_group.add_argument("--method", dest="method",
-            type=str,
-            default=None,
-            choices=smethods,
-            help="If you know bioconvert and method's name, you can set it here. This depends on the command used. Type 'bioconvert fastq-fasta --show--methods' to get the valid method for the command 'fastq2fasta' ")
-
-
-def main(args=None):
-
-    if args is None:
-        args = sys.argv
-
-    # whatever needs to be called by all pipeline before the options parsing
-    before_pipeline(NAME)
-
-    # option parsing including common epilog
-    options = Options(NAME, epilog=sequana_epilog).parse_args(args[1:])
+    if options["from_project"]:
+        click.echo("--from-project Not yet implemented")
+        sys.exit(1)
 
     # the real stuff is here
     manager = SequanaManager(options, NAME)
-
-    # create the beginning of the command and the working directory
     manager.setup()
-    from sequana_pipetools import logger
-    logger.setLevel(options.level)
-    logger.name = "sequana_bioconvert"
-    logger.info(f"#Welcome to sequana_bioconvert pipeline.")
 
-    # fill the config file with input parameters
+    # aliases
+    options = manager.options
     cfg = manager.config.config
-    # EXAMPLE TOREPLACE WITH YOUR NEEDS
+
+    from sequana_pipetools import logger
+
+    logger.setLevel(options.level)
+
     cfg.input_directory = os.path.abspath(options.input_directory)
     cfg.input_pattern = options.input_pattern
-
     cfg.bioconvert.method = options.method
     cfg.bioconvert.command = options.command
     cfg.bioconvert.input_extension = options.input_extension

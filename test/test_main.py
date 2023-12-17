@@ -1,31 +1,52 @@
-import easydev
 import os
-import tempfile
 import subprocess
 import sys
+import tempfile
 
+from click.testing import CliRunner
 
+from sequana_pipelines.bioconvert.main import main
 
 from . import test_dir
-sharedir  = f"{test_dir}/data/"
+
+sharedir = f"{test_dir}/data/"
+
+
 def test_standalone_subprocess():
     directory = tempfile.TemporaryDirectory()
     cmd = """sequana_bioconvert --input-directory {}
             --input-pattern "*fastq.gz" --input-ext fastq.gz --output-ext fasta.gz
             --working-directory {} --force --command fastq2fasta
-          """.format(sharedir, directory.name)
+          """.format(
+        sharedir, directory.name
+    )
     subprocess.call(cmd.split())
 
 
 def test_standalone_script():
     directory = tempfile.TemporaryDirectory()
-    import sequana_pipelines.bioconvert.main as m
-    sys.argv = ["test", "--input-directory", sharedir,
-            "--working-directory", directory.name, "--force",
-            "--input-pattern", '"*fastq.gz"', "--input-ext", "fastq.gz",
-            "--output-ext", "fasta.gz",
-            "--command", "fastq2fasta"]
+
+    runner = CliRunner()
+    args = [
+        "--input-directory",
+        sharedir,
+        "--working-directory",
+        directory.name,
+        "--force",
+        "--input-pattern",
+        '"*fastq.gz"',
+        "--input-ext",
+        "fastq.gz",
+        "--output-ext",
+        "fasta.gz",
+        "--command",
+        "fastq2fasta",
+    ]
+
+    results = runner.invoke(main, args)
+    assert results.exit_code == 0
     m.main()
+
 
 def test_full():
 
@@ -46,4 +67,3 @@ def test_full():
 def test_version():
     cmd = "sequana_bioconvert --version"
     subprocess.call(cmd.split())
-

@@ -59,6 +59,8 @@ rule bioconvert:
     params:
         command= config['bioconvert']['command'],
         method= f" --method {method}" if method else ""
+    resources:
+        **config["bioconvert"]["resources"]
     container:
         config['apptainers']['bioconvert']
     shell:
@@ -71,7 +73,6 @@ onsuccess:
     manager.teardown()
     print("Once done, please clean up the directory using\n'make clean'")
 
-
 onerror:
-    print("An error occurred. See message above.")
+    manager.onerror()
 
