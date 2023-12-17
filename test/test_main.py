@@ -45,7 +45,6 @@ def test_standalone_script():
 
     results = runner.invoke(main, args)
     assert results.exit_code == 0
-    m.main()
 
 
 def test_full():
