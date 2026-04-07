@@ -38,6 +38,8 @@ sequana = ">=0.15.0"
 sequana_pipetools = ">=0.16.0"
 click-completion = "^0.5.2"
 bioconvert = "^1.1.1"
+sequana-wrappers = "^26.4.1"
+snakemake = ">=7.32"
 
 
 

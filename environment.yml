@@ -1,11 +1,9 @@
 name: bioconvert
-
 channels:
 - bioconda
 - conda-forge
 - defaults
 - r
-
 dependencies:
 - gffread
 - bamtools
@@ -32,3 +30,4 @@ dependencies:
 - wiggletools
 - sed
 - mawk
+- pulp>=2.7
